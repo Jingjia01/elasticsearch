@@ -37,15 +37,15 @@ class DownscaleStats {
 
     static final long SIZE = RamUsageEstimator.shallowSizeOf(DownscaleStats.class) + RamEstimationUtil.estimateIntArray(MAX_INDEX_BITS);
 
-    // collapsedBucketCount[i] stores the number of additional
+    // collapsedBucketCountTest[i] stores the number of additional
     // collapsed buckets when increasing the scale by (i+1) instead of just by (i)
-    int[] collapsedBucketCount = new int[MAX_INDEX_BITS];
+    int[] collapsedBucketCountTest = new int[MAX_INDEX_BITS];
 
     /**
      * Resets the data structure to its initial state.
      */
     void reset() {
-        Arrays.fill(collapsedBucketCount, 0);
+        Arrays.fill(collapsedBucketCountTest, 0);
     }
 
     /**
@@ -62,7 +62,7 @@ class DownscaleStats {
          * Below is an efficient variant of the following algorithm:
          * for (int i=0; i<63; i++) {
          *     if (prevIndex>>(i+1) == currIndex>>(i+1)) {
-         *         collapsedBucketCount[i]++;
+         *         collapsedBucketCountTest[i]++;
          *         break;
          *     }
          * }
@@ -74,7 +74,7 @@ class DownscaleStats {
         // Therefore right-shifting will never make the buckets combine
         if (numEqualLeadingBits > 0) {
             int requiredScaleChange = 64 - numEqualLeadingBits;
-            collapsedBucketCount[requiredScaleChange - 1]++;
+            collapsedBucketCountTest[requiredScaleChange - 1]++;
         }
     }
 
@@ -88,7 +88,7 @@ class DownscaleStats {
         assert reduction >= 0 && reduction <= MAX_INDEX_BITS;
         int totalCollapsed = 0;
         for (int i = 0; i < reduction; i++) {
-            totalCollapsed += collapsedBucketCount[i];
+            totalCollapsed += collapsedBucketCountTest[i];
         }
         return totalCollapsed;
     }
@@ -105,8 +105,8 @@ class DownscaleStats {
             return 0;
         }
         int totalCollapsed = 0;
-        for (int i = 0; i < collapsedBucketCount.length; i++) {
-            totalCollapsed += collapsedBucketCount[i];
+        for (int i = 0; i < collapsedBucketCountTest.length; i++) {
+            totalCollapsed += collapsedBucketCountTest[i];
             if (totalCollapsed >= desiredCollapsedBucketCount) {
                 return i + 1;
             }
