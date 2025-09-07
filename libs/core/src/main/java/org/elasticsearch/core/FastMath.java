@@ -180,41 +180,48 @@ final class FastMath {
      * @return Value arctangent, in radians, in [-PI/2,PI/2].
      */
     public static double atan(double value) {
-        boolean negateResult;
-        if (value < 0.0) {
-            value = -value;
-            negateResult = true;
-        } else {
-            negateResult = false;
-        }
+        // Handle negative values
+        boolean negateResult = value < 0.0;
+        if (negateResult) value = -value;
+
+        // Exact result for 1.0
         if (value == 1.0) {
-            // We want "exact" result for 1.0.
             return negateResult ? -Math.PI / 4 : Math.PI / 4;
-        } else if (value <= ATAN_MAX_VALUE_FOR_TABS) {
+        }
+
+        // Use table-based approximation for small values
+        if (value <= ATAN_MAX_VALUE_FOR_TABS) {
             int index = (int) (value * ATAN_INDEXER + 0.5);
             double delta = value - index * ATAN_DELTA;
-            double result = atanTab[index] + delta * (atanDer1DivF1Tab[index] + delta * (atanDer2DivF2Tab[index] + delta
-                * (atanDer3DivF3Tab[index] + delta * atanDer4DivF4Tab[index])));
+            double result = atanTab[index]
+                    + delta * (atanDer1DivF1Tab[index]
+                    + delta * (atanDer2DivF2Tab[index]
+                    + delta * (atanDer3DivF3Tab[index]
+                    + delta * atanDer4DivF4Tab[index])));
             return negateResult ? -result : result;
-        } else { // value > ATAN_MAX_VALUE_FOR_TABS, or value is NaN
-            // This part is derived from fdlibm.
-            if (value < TWO_POW_66) {
-                double x = -1 / value;
-                double x2 = x * x;
-                double x4 = x2 * x2;
-                double s1 = x2 * (ATAN_AT0 + x4 * (ATAN_AT2 + x4 * (ATAN_AT4 + x4 * (ATAN_AT6 + x4 * (ATAN_AT8 + x4 * ATAN_AT10)))));
-                double s2 = x4 * (ATAN_AT1 + x4 * (ATAN_AT3 + x4 * (ATAN_AT5 + x4 * (ATAN_AT7 + x4 * ATAN_AT9))));
-                double result = ATAN_HI3 - ((x * (s1 + s2) - ATAN_LO3) - x);
-                return negateResult ? -result : result;
-            } else { // value >= 2^66, or value is NaN
-                if (Double.isNaN(value)) {
-                    return Double.NaN;
-                } else {
-                    return negateResult ? -Math.PI / 2 : Math.PI / 2;
-                }
-            }
+        }
+
+        // For large values, use fdlibm-based calculation
+        if (value < TWO_POW_66) {
+            double x = -1.0 / value;
+            double x2 = x * x;
+            double x4 = x2 * x2;
+
+            double s1 = x2 * (ATAN_AT0 + x4 * (ATAN_AT2 + x4 * (ATAN_AT4 + x4 * (ATAN_AT6 + x4 * (ATAN_AT8 + x4 * ATAN_AT10)))));
+            double s2 = x4 * (ATAN_AT1 + x4 * (ATAN_AT3 + x4 * (ATAN_AT5 + x4 * (ATAN_AT7 + x4 * ATAN_AT9))));
+            double result = ATAN_HI3 - ((x * (s1 + s2) - ATAN_LO3) - x);
+
+            return negateResult ? -result : result;
+        }
+
+        // Extremely large values or NaN
+        if (Double.isNaN(value)) {
+            return Double.NaN;
+        } else {
+            return negateResult ? -Math.PI / 2 : Math.PI / 2;
         }
     }
+
 
     /**
      * @param value A double value.
