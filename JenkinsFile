@@ -8,7 +8,7 @@ pipeline {
     options {
         skipDefaultCheckout()
     }
-
+   // ill add build later
     stages {
         stage('Checkout repository') {
             steps {
