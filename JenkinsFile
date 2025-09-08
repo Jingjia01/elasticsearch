@@ -37,7 +37,7 @@ pipeline {
                 ELASTIC_PASSWORD = 'b63vMaMQ01h-ZP=oZMH-'
             }
             steps {
-                powershell '.\\deploy.ps1'
+                powershell 'powershell -ExecutionPolicy Bypass -File .\\deploy.ps1'
             }
         }
     }
