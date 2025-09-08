@@ -37,11 +37,7 @@ pipeline {
                 ELASTIC_PASSWORD = 'b63vMaMQ01h-ZP=oZMH-'
             }
             steps {
-                powershell(
-                    label: 'Deploy Elasticsearch & Kibana',
-                    script: 'Set-ExecutionPolicy Bypass -Scope Process -Force; .\\deploy.ps1',
-                    returnStatus: false
-                )
+                bat 'powershell -ExecutionPolicy Bypass -File .\\deploy.ps1'
             }
         }
     }
