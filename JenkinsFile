@@ -2,13 +2,13 @@ pipeline {
     agent any
 
     tools {
-        jdk 'jdk_21' 
+        jdk 'jdk_21'
     }
 
     options {
         skipDefaultCheckout()
     }
-   // ill add build later
+
     stages {
         stage('Checkout repository') {
             steps {
@@ -34,6 +34,12 @@ pipeline {
         always {
             junit '**/build/test-results/**/*.xml'
             archiveArtifacts artifacts: '**/build/reports/tests/**/*', allowEmptyArchive: true
+        }
+        success {
+            echo 'Build and tests completed successfully.'
+        }
+        failure {
+            echo 'Build or tests failed. Please check logs and reports.'
         }
     }
 }
