@@ -23,8 +23,7 @@ services:
     volumes:
       - esdata:/usr/share/elasticsearch/data
     healthcheck:
-      # If ES_SECURITY=false (default), HTTP is plain:
-      test: ["CMD-SHELL", "curl -fsS http://localhost:9200 >/dev/null || exit 1"]
+      test: ["CMD-SHELL", "curl -u elastic:${ELASTIC_PASSWORD} -fsS http://localhost:9200 >/dev/null || exit 1"]
       interval: 15s
       timeout: 5s
       retries: 20
