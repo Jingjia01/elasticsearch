@@ -28,6 +28,18 @@ pipeline {
                 bat 'gradlew.bat :server:test --stacktrace --no-daemon'
             }
         }
+
+        stage('Deploy service') {
+            environment {
+                ES_VERSION = '8.14.0'
+                ES_JAVA_OPTS = '-Xms2g -Xmx2g'
+                ES_SECURITY = 'true'
+                ELASTIC_PASSWORD = 'b63vMaMQ01h-ZP=oZMH-'
+            }
+            steps {
+                bat '.\\deploy.ps1'
+            }
+        }
     }
 
     post {
@@ -36,10 +48,10 @@ pipeline {
             archiveArtifacts artifacts: '**/build/reports/tests/**/*', allowEmptyArchive: true
         }
         success {
-            echo 'Build and tests completed successfully.'
+            echo 'Build, tests, and deployment completed successfully.'
         }
         failure {
-            echo 'Build or tests failed. Please check logs and reports.'
+            echo 'Build, tests, or deployment failed. Please check logs and reports.'
         }
     }
 }
