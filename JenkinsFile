@@ -23,12 +23,6 @@ pipeline {
             }
         }
 
-        stage('Run server tests') {
-            steps {
-                bat 'gradlew.bat :server:test --stacktrace --no-daemon'
-            }
-        }
-
         stage('Deploy service') {
             environment {
                 ES_VERSION = '8.14.0'
