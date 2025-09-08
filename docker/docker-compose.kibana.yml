@@ -11,8 +11,12 @@ services:
     ports:
       - "5601:5601"
     healthcheck:
-      test: ["CMD-SHELL", "curl -u elastic:${ELASTIC_PASSWORD} -fsS http://localhost:5601/api/status | grep -q '\"state\":\"green\"' || exit 1"]
+      test:
+        [
+          "CMD-SHELL",
+          "if curl -u elastic:${ELASTIC_PASSWORD} -fsS http://localhost:5601/api/status | grep -q '\"state\":\"green\"'; then echo '✅ Kibana is healthy'; exit 0; else echo '❌ Kibana not ready yet'; exit 1; fi"
+        ]
       interval: 15s
       timeout: 10s
-      retries: 40
+      retries: 5
       start_period: 40s
