@@ -28,7 +28,8 @@ pipeline {
                 bat 'gradlew.bat :server:test --stacktrace --no-daemon'
             }
         }
-
+ 
+       // deploy not deploying
         stage('Deploy service') {
             environment {
                 ES_VERSION = '8.14.0'
