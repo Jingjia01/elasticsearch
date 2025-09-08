@@ -8,12 +8,11 @@ pipeline {
     options {
         skipDefaultCheckout()
     }
-    // test
     stages {
         stage('Checkout repository') {
             steps {
                 git branch: 'main',
-                    url: 'https://github.com/Jingjia01/elasticsearch.git'
+                    url: 'https://github.com/ReddyTMG/elasticsearch.git'
             }
         }
 
@@ -29,7 +28,6 @@ pipeline {
             }
         }
  
-       // deploy not deploying
         stage('Deploy service') {
             environment {
                 ES_VERSION = '8.14.0'

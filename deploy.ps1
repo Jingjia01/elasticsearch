@@ -24,3 +24,5 @@ if ($LASTEXITCODE -eq 0) {
 } else {
     Write-Host "Deployment failed!"
 }
+
+cmd /c "docker compose -f docker\docker-compose.yml -f docker\docker-compose.kibana.yml --env-file $envFile down"
