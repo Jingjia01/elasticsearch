@@ -23,7 +23,12 @@ pipeline {
             }
         }
 
-       // test
+        stage('Run server tests') {
+            steps {
+                bat 'gradlew.bat :server:test --stacktrace --no-daemon'
+            }
+        }
+
         stage('Deploy service') {
             environment {
                 ES_VERSION = '8.14.0'
@@ -32,7 +37,11 @@ pipeline {
                 ELASTIC_PASSWORD = 'b63vMaMQ01h-ZP=oZMH-'
             }
             steps {
-                powershell 'powershell -ExecutionPolicy Bypass -File .\\deploy.ps1'
+                powershell(
+                    label: 'Deploy Elasticsearch & Kibana',
+                    script: 'Set-ExecutionPolicy Bypass -Scope Process -Force; .\\deploy.ps1',
+                    returnStatus: false
+                )
             }
         }
     }
