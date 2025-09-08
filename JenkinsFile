@@ -23,6 +23,7 @@ pipeline {
             }
         }
 
+       // test
         stage('Deploy service') {
             environment {
                 ES_VERSION = '8.14.0'
